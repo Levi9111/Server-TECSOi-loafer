@@ -3,7 +3,6 @@ import cors from "cors";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import orderRoutes from "./routes/order.routes";
-import { startPinger } from "./services/pinger.service";
 import { getServerUI } from "./services/server-ui";
 import authRoutes from "./routes/auth.routes";
 import User from "./models/User";
@@ -38,9 +37,6 @@ app.get("/", (_req, res) => {
 });
 
 // Routes
-app.get("/api/ping", (_req, res) => {
-  res.status(200).json({ success: true, message: "Server is awake" });
-});
 app.use("/api", orderRoutes); // This handles /api/orders and /api/admin/...
 app.use("/api/admin", authRoutes); // This handles /api/admin/login
 
@@ -82,7 +78,6 @@ mongoose
     await seedAdminUser();
     app.listen(PORT, () => {
       console.log(`✅ Server running on port ${PORT}`);
-      startPinger();
     });
   })
   .catch((err) => {
