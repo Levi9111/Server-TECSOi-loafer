@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import orderRoutes from "./routes/order.routes";
 import { startPinger } from "./services/pinger.service";
+import { getServerUI } from "./services/server-ui";
 import authRoutes from "./routes/auth.routes";
 import User from "./models/User";
 
@@ -30,6 +31,11 @@ for (const key of requiredEnvVars) {
 const app = express();
 app.use(cors());
 app.use(express.json());
+
+// Root route - Server UI
+app.get("/", (_req, res) => {
+  res.send(getServerUI());
+});
 
 // Routes
 app.get("/api/ping", (_req, res) => {
