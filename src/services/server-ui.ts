@@ -165,7 +165,6 @@ export const getServerUI = () => {
             <div class="card">
                 <h1>Backend API Service</h1>
                 <p>The core engine powering TEKSOi Leather's digital experience. Secure, fast, and reliable order processing.</p>
-                <a href="/api/ping" class="api-link">Check API Status</a>
             </div>
         </div>
     </body>
