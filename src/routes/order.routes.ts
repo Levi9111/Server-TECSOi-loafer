@@ -4,7 +4,7 @@ import { orderValidationRules, handleValidationErrors } from "../middleware/vali
 
 const router = Router();
 
-router.post("/", orderValidationRules, handleValidationErrors, createOrder);
+router.post("/orders", orderValidationRules, handleValidationErrors, createOrder);
 router.get("/:id", getOrder);
 
 // Admin routes
