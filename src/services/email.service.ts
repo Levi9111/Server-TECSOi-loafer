@@ -62,9 +62,11 @@ export const sendOrderEmail = async (order: IOrderDocument) => {
     </div>
   `;
 
+  const recipients = [process.env.MANAGER_EMAIL, process.env.ADMIN_EMAIL].filter(Boolean) as string[];
+
   await transporter.sendMail({
     from: `"TEKSOi Leather" <${process.env.SMTP_USER}>`,
-    to: process.env.MANAGER_EMAIL,
+    to: recipients,
     subject: `New Order from ${order.fullName} — ৳${order.grandTotal.toLocaleString()}`,
     html,
   });
@@ -84,9 +86,11 @@ export const sendContactEmail = async (data: { name: string; phone: string; mess
     </div>
   `;
 
+  const recipients = [process.env.MANAGER_EMAIL, process.env.ADMIN_EMAIL].filter(Boolean) as string[];
+
   await transporter.sendMail({
     from: `"TEKSOi Leather Contact" <${process.env.SMTP_USER}>`,
-    to: process.env.MANAGER_EMAIL,
+    to: recipients,
     subject: `New Message from ${data.name}`,
     html,
   });
