@@ -69,3 +69,25 @@ export const sendOrderEmail = async (order: IOrderDocument) => {
     html,
   });
 };
+
+export const sendContactEmail = async (data: { name: string; phone: string; message: string }) => {
+  const html = `
+    <div style="font-family:Arial,sans-serif;max-width:600px;margin:auto">
+      <h2 style="color:#2c2c2c">📩 New Contact Message — TEKSOi Leather</h2>
+      <hr/>
+      <p><strong>Name:</strong> ${data.name}</p>
+      <p><strong>Phone:</strong> ${data.phone}</p>
+      <p><strong>Message:</strong></p>
+      <p style="white-space:pre-wrap;background:#f9f9f9;padding:15px;border-radius:5px">${data.message}</p>
+      <hr/>
+      <p style="color:#888;font-size:12px">This email was sent from the contact form on the TEKSOi Leather website.</p>
+    </div>
+  `;
+
+  await transporter.sendMail({
+    from: `"TEKSOi Leather Contact" <${process.env.SMTP_USER}>`,
+    to: process.env.MANAGER_EMAIL,
+    subject: `New Message from ${data.name}`,
+    html,
+  });
+};

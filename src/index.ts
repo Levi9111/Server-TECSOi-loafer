@@ -5,6 +5,7 @@ import dotenv from "dotenv";
 import orderRoutes from "./routes/order.routes";
 import { getServerUI } from "./services/server-ui";
 import authRoutes from "./routes/auth.routes";
+import contactRoutes from "./routes/contact.routes";
 import User from "./models/User";
 
 dotenv.config();
@@ -37,8 +38,9 @@ app.get("/", (_req, res) => {
 });
 
 // Routes
-app.use("/api", orderRoutes); // This handles /api/orders and /api/admin/...
-app.use("/api/admin", authRoutes); // This handles /api/admin/login
+app.use("/api", orderRoutes);
+app.use("/api/contact", contactRoutes);
+app.use("/api/admin", authRoutes);
 
 app.use((_req, res) => {
   res.status(404).json({ success: false, message: "Route not found" });
