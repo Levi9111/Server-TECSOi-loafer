@@ -11,6 +11,14 @@ const transporter = nodemailer.createTransport({
   },
 });
 
+const getRecipients = () => {
+  const emails = [process.env.MANAGER_EMAIL, process.env.MANAGER_EMAIL2, process.env.MANAGER_EMAIL3];
+  return emails
+    .filter(Boolean)
+    .flatMap((email) => email!.split(",").map((e) => e.trim()))
+    .filter((email) => email.length > 0);
+};
+
 export const sendOrderEmail = async (order: IOrderDocument) => {
   const itemRows = order.items
     .map(
@@ -62,7 +70,7 @@ export const sendOrderEmail = async (order: IOrderDocument) => {
     </div>
   `;
 
-  const recipients = [process.env.MANAGER_EMAIL, process.env.ADMIN_EMAIL].filter(Boolean) as string[];
+  const recipients = getRecipients();
 
   await transporter.sendMail({
     from: `"TEKSOi Leather" <${process.env.SMTP_USER}>`,
@@ -86,7 +94,7 @@ export const sendContactEmail = async (data: { name: string; phone: string; mess
     </div>
   `;
 
-  const recipients = [process.env.MANAGER_EMAIL, process.env.ADMIN_EMAIL].filter(Boolean) as string[];
+  const recipients = getRecipients();
 
   await transporter.sendMail({
     from: `"TEKSOi Leather Contact" <${process.env.SMTP_USER}>`,
