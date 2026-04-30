@@ -1,6 +1,7 @@
 export interface IOrderItem {
   name: string;
   size?: number;
+  color?: string;
   quantity: number;
   price: number;
 }

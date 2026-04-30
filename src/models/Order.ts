@@ -15,6 +15,7 @@ const OrderSchema = new Schema<IOrderDocument>(
       {
         name:     { type: String, required: true },
         size:     { type: Number },
+        color:    { type: String },
         quantity: { type: Number, required: true },
         price:    { type: Number, required: true },
       },
