@@ -4,14 +4,14 @@ import { sendOrderEmail } from "../services/email.service";
 
 export const createOrder = async (req: Request, res: Response) => {
   try {
-    const { fullName, phone, address, city, note, payment, items } = req.body;
+    const { fullName, phone, address, city, note, payment, items, deliveryZone } = req.body;
 
     const subtotal = items.reduce(
       (sum: number, item: { price: number; quantity: number }) =>
         sum + item.price * item.quantity,
       0
     );
-    const deliveryFee = 120;
+    const deliveryFee = deliveryZone === "outside" ? 120 : 70;
     const grandTotal = subtotal + deliveryFee;
 
     const order = await Order.create({

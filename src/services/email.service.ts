@@ -1,15 +1,43 @@
 import nodemailer from "nodemailer";
 import { IOrderDocument } from "../models/Order";
 
-const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST,
-  port: Number(process.env.SMTP_PORT),
-  secure: false,
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
-  },
-});
+// Strip any stray quotes from environment values (common dotenv issue)
+const cleanEnv = (val: string | undefined) => val?.replace(/^['"]|['"]$/g, "").trim() || "";
+
+// Create transporter lazily to ensure env vars are loaded
+let transporter: nodemailer.Transporter | null = null;
+
+const getTransporter = () => {
+  if (!transporter) {
+    const smtpUser = cleanEnv(process.env.SMTP_USER);
+    const smtpPass = cleanEnv(process.env.SMTP_PASS);
+
+    console.log(`[EMAIL] Configuring SMTP: host=${process.env.SMTP_HOST}, port=${process.env.SMTP_PORT}, user=${smtpUser}`);
+
+    transporter = nodemailer.createTransport({
+      host: process.env.SMTP_HOST,
+      port: Number(process.env.SMTP_PORT),
+      secure: false,
+      auth: {
+        user: smtpUser,
+        pass: smtpPass,
+      },
+      tls: {
+        rejectUnauthorized: false,
+      },
+    });
+
+    // Verify connection on first creation
+    transporter.verify((error, _success) => {
+      if (error) {
+        console.error("[EMAIL] SMTP connection verification failed:", error.message);
+      } else {
+        console.log("[EMAIL] ✅ SMTP connection verified successfully");
+      }
+    });
+  }
+  return transporter;
+};
 
 const getRecipients = () => {
   const emails = [process.env.MANAGER_EMAIL, process.env.MANAGER_EMAIL2, process.env.MANAGER_EMAIL3];
@@ -72,8 +100,8 @@ export const sendOrderEmail = async (order: IOrderDocument) => {
 
   const recipients = getRecipients();
 
-  await transporter.sendMail({
-    from: `"TEKSOi Leather" <${process.env.SMTP_USER}>`,
+  await getTransporter().sendMail({
+    from: `"TEKSOi Leather" <${cleanEnv(process.env.SMTP_USER)}>`,
     to: recipients,
     subject: `New Order from ${order.fullName} — ৳${order.grandTotal.toLocaleString()}`,
     html,
@@ -96,8 +124,8 @@ export const sendContactEmail = async (data: { name: string; phone: string; mess
 
   const recipients = getRecipients();
 
-  await transporter.sendMail({
-    from: `"TEKSOi Leather Contact" <${process.env.SMTP_USER}>`,
+  await getTransporter().sendMail({
+    from: `"TEKSOi Leather Contact" <${cleanEnv(process.env.SMTP_USER)}>`,
     to: recipients,
     subject: `New Message from ${data.name}`,
     html,
